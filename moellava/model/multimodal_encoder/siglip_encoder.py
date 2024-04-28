@@ -23,6 +23,7 @@ class SiglipVisionTower(nn.Module):
             self.cfg_only = SiglipVisionConfig.from_pretrained(self.image_tower_name, cache_dir=self.cache_dir)
 
     def load_model(self):
+        print(f"CHARLIE LOAD 1")
         self.image_processor = SiglipImageProcessor.from_pretrained(self.image_tower_name, cache_dir=self.cache_dir)
         self.image_tower = SiglipVisionModel.from_pretrained(self.image_tower_name, cache_dir=self.cache_dir)
         self.image_tower.requires_grad_(False)

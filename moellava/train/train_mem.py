@@ -8,6 +8,8 @@ from moellava.train.llama_flash_attn_monkey_patch import replace_llama_attn_with
 replace_llama_attn_with_flash_attn()
 
 from moellava.train.train import train
+# from moellava.train.train_og import train
 
 if __name__ == "__main__":
+    print("CHARLIE train_mem.py enter")
     train()

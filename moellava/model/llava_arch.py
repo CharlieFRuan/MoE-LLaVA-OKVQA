@@ -57,29 +57,35 @@ class LlavaMetaModel:
         video_tower = model_args.video_tower
         assert image_tower is not None or video_tower is not None
         # ==============================================
-
+        print(f"CHARLIE VISION 1")
         mm_vision_select_layer = model_args.mm_vision_select_layer
         mm_vision_select_feature = model_args.mm_vision_select_feature
         pretrain_mm_mlp_adapter = model_args.pretrain_mm_mlp_adapter
-
+        print(f"CHARLIE VISION 2")
         # ==========================================================================
 
         self.config.mm_image_tower = image_tower
         if image_tower is not None:
+            print(f"CHARLIE VISION 3")
             if self.get_image_tower() is None:
+                print(f"CHARLIE VISION 4")
                 image_tower = build_image_tower(model_args)
-
+                print(f"CHARLIE VISION 5")
                 if fsdp is not None and len(fsdp) > 0:
                     self.image_tower = [image_tower]
                 else:
                     self.image_tower = image_tower
             else:
+                print(f"CHARLIE VISION 6")
                 if fsdp is not None and len(fsdp) > 0:
                     image_tower = self.image_tower[0]
                 else:
                     image_tower = self.image_tower
-                image_tower.load_model()
+                if not image_tower.is_loaded:
+                    print(f"CHARLIE VISION NOT LOADED")
+                    image_tower.load_model()
 
+        print(f"CHARLIE VISION 7")
 
         self.config.mm_video_tower = video_tower
         if video_tower is not None:
@@ -107,6 +113,8 @@ class LlavaMetaModel:
         self.config.video_global_proj = getattr(model_args, 'video_global_proj', None)
         self.config.video_temproal_proj = getattr(model_args, 'video_temproal_proj', None)
         self.config.video_spatial_proj = getattr(model_args, 'video_spatial_proj', None)
+
+        print(f"CHARLIE VISION 8")
         # print(self.config.image_projector_type, self.config.video_projector_type, self.config.video_global_proj, self.config.video_temproal_proj)
         if image_tower is not None and video_tower is not None:  # TODO: support different hidden_size
             assert image_tower.hidden_size == video_tower.hidden_size
@@ -115,23 +123,28 @@ class LlavaMetaModel:
             self.config.mm_hidden_size = max(getattr(image_tower, 'hidden_size', -1),
                                              getattr(video_tower, 'hidden_size', -1))
         # ===================================================================================
+        print(f"CHARLIE VISION 9")
         self.config.mm_vision_select_layer = mm_vision_select_layer
         self.config.mm_vision_select_feature = mm_vision_select_feature
-
+        print(f"CHARLIE VISION 10")
         if getattr(self, 'mm_projector', None) is None:
+            print(f"CHARLIE VISION 11")
             self.mm_projector = build_projector(self.config)
         else:
             # In case it is frozen by LoRA
+            print(f"CHARLIE VISION 12")
             for p in self.mm_projector.parameters():
                 p.requires_grad = True
-
+        
+        print(f"CHARLIE VISION 13")
         if pretrain_mm_mlp_adapter is not None:
+            print(f"CHARLIE VISION 14")
             mm_projector_weights = torch.load(pretrain_mm_mlp_adapter, map_location='cpu')
             def get_w(weights, keyword):
                 return {k.split(keyword + '.')[1]: v for k, v in weights.items() if keyword in k}
 
             self.mm_projector.load_state_dict(get_w(mm_projector_weights, 'mm_projector'))
-
+        print(f"CHARLIE VISION 15")
 
 class LlavaMetaForCausalLM(ABC):
 

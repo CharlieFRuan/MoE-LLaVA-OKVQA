@@ -22,11 +22,14 @@ class CLIPVisionTower(nn.Module):
             self.cfg_only = CLIPVisionConfig.from_pretrained(self.image_tower_name, cache_dir=self.cache_dir)
 
     def load_model(self):
+        print(f"CHARLIE LOAD 2")
+        print(f"CHARLIE image_tower_name: {self.image_tower_name}")
         self.image_processor = CLIPImageProcessor.from_pretrained(self.image_tower_name, cache_dir=self.cache_dir)
         self.image_tower = CLIPVisionModel.from_pretrained(self.image_tower_name, cache_dir=self.cache_dir)
         self.image_tower.requires_grad_(False)
 
         self.is_loaded = True
+        print(f"CHARLIE LOAD 3")
 
     def feature_select(self, image_forward_outs):
         image_features = image_forward_outs.hidden_states[self.select_layer]

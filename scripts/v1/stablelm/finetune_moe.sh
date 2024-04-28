@@ -5,17 +5,17 @@ num_experts=4
 top_k_experts=2
 use_residual=False
 router_aux_loss_coef=0.01
-JSON_FOLDER="ft_json"
-IMAGE_FOLDER="train_image_video"
-cd ~/MoE-LLaVA
-HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 deepspeed moellava/train/train_mem.py \
+JSON_FOLDER="json_folder"
+IMAGE_FOLDER="image_folder"
+
+HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 deepspeed --master_port 29600 moellava/train/train_mem.py \
     --moe_enable True --num_experts ${num_experts} --top_k_experts ${top_k_experts} --capacity_factor 1.5 \
     --moe_mode ${moe_mode} --use_residual ${use_residual} --router_aux_loss_coef ${router_aux_loss_coef} \
     --train_modules gate_proj up_proj down_proj wg \
     --deepspeed ./scripts/zero2.json \
-    --model_name_or_path ./checkpoints/llavastablelm-1.6b-finetune \
+    --model_name_or_path /home/ubuntu/workspace/models/MoE-LLaVA-StableLM-Stage2 \
     --version stablelm \
-    --data_path ${JSON_FOLDER}/llava_image_tune_.json ${JSON_FOLDER}/nlp_tune.json \
+    --data_path ${JSON_FOLDER}/llava_image_00119_.json \
     --image_folder ${IMAGE_FOLDER} \
     --image_tower openai/clip-vit-large-patch14-336 \
     --image_projector_type mlp2x_gelu \
@@ -39,7 +39,7 @@ HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 deepspeed moellava/train/train_mem.
     --warmup_ratio 0.03 \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
-    --tf32 True \
+    --tf32 False \
     --model_max_length 2048 \
     --gradient_checkpointing True \
     --dataloader_num_workers 4 \

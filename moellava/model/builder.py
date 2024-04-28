@@ -254,6 +254,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                     model = LlavaMiniCPMForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, config=cfg_pretrained, **kwargs)
                 model.config.eos_token_id = tokenizer.eos_token_id
             elif 'stablelm' in model_name.lower():
+                print("CHARLIE INFEREENCE 1")
                 from moellava.model.language_model.stablelm.tokenization_arcade100k import Arcade100kTokenizer
                 from moellava.model.language_model.stablelm.configuration_stablelm_epoch import StableLMEpochConfig
                 tokenizer = Arcade100kTokenizer.from_pretrained(model_base, use_fast=False, padding_side=padding_side)

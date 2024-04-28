@@ -155,13 +155,15 @@ class LLaVATrainer(Trainer):
         Trainer's init through `optimizers`, or subclass and override this method in a subclass.
         """
         if is_sagemaker_mp_enabled():
+            print("CHARLIE TRAINER 1")
             return super().create_optimizer()
         # if self.sharded_ddp == ShardedDDPOption.SIMPLE:
         #     return super().create_optimizer()
-
+        print("CHARLIE TRAINER 2")
         opt_model = self.model
 
         if self.optimizer is None:
+            print("CHARLIE TRAINER 3")
             decay_parameters = get_parameter_names(opt_model, ALL_LAYERNORM_LAYERS)
             decay_parameters = [name for name in decay_parameters if "bias" not in name]
             if self.args.mm_projector_lr is not None:
@@ -218,7 +220,9 @@ class LLaVATrainer(Trainer):
             # import ipdb
             # ipdb.set_trace()
             # print('self.args.moe_enable', self.args.moe_enable)
+            print("CHARLIE TRAINER 4")
             if self.args.moe_enable:
+                print("CHARLIE TRAINER 5")
                 from deepspeed.moe.utils import split_params_into_different_moe_groups_for_optimizer
                 optimizer_grouped_parameters = split_params_into_different_moe_groups_for_optimizer(optimizer_grouped_parameters)
             optimizer_cls, optimizer_kwargs = Trainer.get_optimizer_cls_and_kwargs(self.args)
